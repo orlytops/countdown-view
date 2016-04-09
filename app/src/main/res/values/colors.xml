@@ -3,4 +3,11 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="fore_ground">#DCDDCD</color>
+    <color name="day">#E55853</color>
+    <color name="hours">#353534</color>
+    <color name="minutes">#83BF17</color>
+    <color name="seconds">#A68F58</color>
+    <color name="milliseconds">#D14D28</color>
 </resources>
