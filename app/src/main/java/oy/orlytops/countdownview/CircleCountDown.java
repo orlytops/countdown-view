@@ -3,17 +3,12 @@ package oy.orlytops.countdownview;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
-import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 /**
  * Created by Orlando Yanson Jr on 4/9/2016.
@@ -21,6 +16,12 @@ import android.view.ViewGroup;
 public class CircleCountDown extends View {
 
     private Rect absoluteRect = new Rect();
+    private Paint background = new Paint();
+    private Paint progress = new Paint();
+
+    private Canvas canvas;
+    private float timRemainingInMillis;
+
 
     private LayoutInflater layoutInflater;
 
@@ -47,35 +48,46 @@ public class CircleCountDown extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        this.canvas = canvas;
 
         getLocalVisibleRect(absoluteRect);
 
-        Paint paintBackground = new Paint();
-        paintBackground.setAntiAlias(true);
-        paintBackground.setStyle(Paint.Style.STROKE);
-        paintBackground.setStrokeWidth(60);
-        paintBackground.setStrokeCap(Paint.Cap.ROUND);
-        paintBackground.setColor(Color.BLUE);
+        background.setAntiAlias(true);
+        background.setStyle(Paint.Style.STROKE);
+        background.setStrokeWidth(60);
+        background.setStrokeCap(Paint.Cap.ROUND);
+        background.setColor(getResources().getColor(R.color.fore_ground));
 
-        Paint mPaintProgress = new Paint();
-        mPaintProgress.setAntiAlias(true);
-        mPaintProgress.setStyle(Paint.Style.STROKE);
-        mPaintProgress.setStrokeWidth(30);
-        mPaintProgress.setStrokeCap(Paint.Cap.ROUND);
-        mPaintProgress.setColor(Color.WHITE);
+        progress.setAntiAlias(true);
+        progress.setStyle(Paint.Style.STROKE);
+        progress.setStrokeWidth(30);
+        progress.setStrokeCap(Paint.Cap.ROUND);
+        progress.setColor(getResources().getColor(R.color.seconds));
 
         // draw background line
-        canvas.drawArc(new RectF(absoluteRect.left + 50, absoluteRect.top + 50, absoluteRect.right - 50, absoluteRect.bottom - 50), 0, 360, false, paintBackground);
-        // draw progress line
-        canvas.drawArc(new RectF(absoluteRect.left + 30, absoluteRect.top + 30, absoluteRect.right - 30, absoluteRect.bottom - 30), 270, 180, false, mPaintProgress);
+        canvas.drawArc(new RectF(absoluteRect.left + 50, absoluteRect.top + 50,
+                absoluteRect.right - 50, absoluteRect.bottom - 50), 0, 360, false, background);
 
+        int timeInSeconds = (int) timRemainingInMillis / 1000;
+        int timeConsumed = 60 - timeInSeconds;
+        int angle = (6 * timeConsumed);
+
+
+        canvas.drawArc(new RectF(absoluteRect.left + 50, absoluteRect.top + 50,
+                absoluteRect.right - 50, absoluteRect.bottom - 50), 270, angle, false, progress);
+
+        Paint paintText = new Paint();
+        paintText.setColor(Color.BLACK);
+        paintText.setTextSize(100);
+        paintText.setFakeBoldText(true);
+
+        canvas.drawText(timeInSeconds + "", absoluteRect.centerX() - 40, absoluteRect.centerY() + 40, paintText);
     }
 
-    private Path drawCurve(Canvas canvas, Paint paint, PointF mPointa, PointF mPointb) {
 
-        Path myPath = new Path();
-        myPath.moveTo(63 * absoluteRect.width() / 64, absoluteRect.height() / 10);
-        myPath.quadTo(mPointa.x, mPointa.y, mPointb.x, mPointb.y);
-        return myPath;
+    public void setTimeRemainingInMillis(float timRemainingInMillis) {
+        this.timRemainingInMillis = timRemainingInMillis;
+        this.invalidate();
     }
+
 }
